@@ -13,7 +13,7 @@ namespace LabFilters
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new LabFiltersForm1());
+            Application.Run(new LabFiltersForm());
         }
     }
 }

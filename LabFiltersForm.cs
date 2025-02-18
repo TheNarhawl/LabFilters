@@ -10,13 +10,69 @@ using System.Windows.Forms;
 
 namespace LabFilters
 {
-    public partial class LabFiltersForm1 : Form
+    public partial class LabFiltersForm : Form
     {
 
         Bitmap image;
-        public LabFiltersForm1()
+        private Stack<Bitmap> undoStack = new Stack<Bitmap>();
+        private Stack<Bitmap> redoStack = new Stack<Bitmap>();
+        private int maxHistorySize = 10;
+
+        public LabFiltersForm()
         {
             InitializeComponent();
+            this.KeyPreview = true;
+
+            HotkeysManager hotkeysManager = new HotkeysManager(undoStack, redoStack, undoAction, redoAction);
+        }
+
+
+        private void saveInHistory()
+        {
+            if (image != null)
+            {
+                
+                if (undoStack.Count >= maxHistorySize)
+                {
+                    undoStack.Pop();
+                }
+
+                undoStack.Push((Bitmap)image.Clone());
+
+                redoStack.Clear();
+            }
+        }
+
+        private void undoAction()
+        {
+            if (undoStack.Count > 0)
+            {
+                redoStack.Push((Bitmap)image.Clone());
+
+                image = undoStack.Pop();
+                pictureBox.Image = image;
+                pictureBox.Refresh();
+            }
+            else
+            {
+                MessageBox.Show("Нет действий для отмены.", "Отмена");
+            }
+        }
+
+        private void redoAction()
+        {
+            if (redoStack.Count > 0)
+            {
+                undoStack.Push((Bitmap)image.Clone());
+
+                image = redoStack.Pop();
+                pictureBox.Image = image;
+                pictureBox.Refresh();
+            }
+            else
+            {
+                MessageBox.Show("Нет действий для возврата.", "Возврат");
+            }
         }
 
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
@@ -29,6 +85,7 @@ namespace LabFilters
                 try
                 {
                     image = new Bitmap(dialog.FileName);
+
                     pictureBox.Image = image;
                     pictureBox.Refresh();
                 }
@@ -37,7 +94,6 @@ namespace LabFilters
                     MessageBox.Show("что-то пошло не так..." + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-
         }
 
         private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
@@ -65,24 +121,25 @@ namespace LabFilters
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
+            
             Bitmap imageCopy;
             lock (image)
                 imageCopy = new Bitmap(image);
 
-
-
             this.Invoke((MethodInvoker)delegate {
-                progressBar1.Visible = true;
+                saveInHistory();
+
+                progressBar.Visible = true;
                 button1.Visible = true;
                 executeLabel.Visible = true;
 
                 executeLabel.BringToFront();
             });
 
-            Bitmap newImage = ((Filters)e.Argument).processImage(imageCopy, backgroundWorker1);
+            Bitmap newImage = ((Filters)e.Argument).processImage(imageCopy, backgroundWorker);
 
-            if (backgroundWorker1.CancellationPending != true)
-                image = newImage;
+            if (backgroundWorker.CancellationPending != true)
+                    image = newImage;
             else
                 e.Cancel = true;
 
@@ -90,7 +147,7 @@ namespace LabFilters
 
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            progressBar1.Value = e.ProgressPercentage;
+            progressBar.Value = e.ProgressPercentage;
         }
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -98,25 +155,27 @@ namespace LabFilters
             {
                 pictureBox.Image = image;
                 pictureBox.Refresh();
+
             }
 
-            progressBar1.Visible = false;
+            progressBar.Visible = false;
             button1.Visible = false;
             executeLabel.Visible = false;
 
-            progressBar1.Value = 0;
+            progressBar.Value = 0;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            backgroundWorker1.CancelAsync();
+            undoStack.Pop();
+            backgroundWorker.CancelAsync();
         }
         private void инверсияToolStripMenuItem_Click(object sender, EventArgs e)
         {
             executeLabel.Text = "Идёт выполнение: Инверсия";
 
             InvertFilter filter = new InvertFilter();
-            backgroundWorker1.RunWorkerAsync(filter);
+            backgroundWorker.RunWorkerAsync(filter);
 
         }
 
@@ -125,7 +184,7 @@ namespace LabFilters
             executeLabel.Text = "Идёт выполнение: Размытие";
 
             Filters filter = new BlurFilter();
-            backgroundWorker1.RunWorkerAsync(filter);
+            backgroundWorker.RunWorkerAsync(filter);
         }
 
         private void размытиеПоГауссуToolStripMenuItem_Click(object sender, EventArgs e)
@@ -133,7 +192,7 @@ namespace LabFilters
             executeLabel.Text = "Идёт выполнение: Размытие по Гауссу";
 
             Filters filter = new GaussianFilter();
-            backgroundWorker1.RunWorkerAsync(filter);
+            backgroundWorker.RunWorkerAsync(filter);
         }
 
         private void чернобелыйToolStripMenuItem_Click(object sender, EventArgs e)
@@ -141,7 +200,7 @@ namespace LabFilters
             executeLabel.Text = "Идёт выполнение: Черно-белый";
 
             Filters filter = new BlackAndWhiteFilter();
-            backgroundWorker1.RunWorkerAsync(filter);
+            backgroundWorker.RunWorkerAsync(filter);
         }
 
         private void сепияToolStripMenuItem_Click(object sender, EventArgs e)
@@ -149,7 +208,7 @@ namespace LabFilters
             executeLabel.Text = "Идёт выполнение: Сепия";
 
             Filters filter = new SepiaFilter();
-            backgroundWorker1.RunWorkerAsync(filter);
+            backgroundWorker.RunWorkerAsync(filter);
         }
 
         private void увеличитьЯркостьToolStripMenuItem_Click(object sender, EventArgs e)
@@ -157,7 +216,7 @@ namespace LabFilters
             executeLabel.Text = "Идёт выполнение: Увеличить яркость";
 
             Filters filter = new IncreaseBrightness();
-            backgroundWorker1.RunWorkerAsync(filter);
+            backgroundWorker.RunWorkerAsync(filter);
         }
 
         private void увеличитьРезкостьToolStripMenuItem_Click(object sender, EventArgs e)
@@ -165,7 +224,7 @@ namespace LabFilters
             executeLabel.Text = "Идёт выполнение: Увеличить резкость";
 
             Filters filter = new SharpenFilter();
-            backgroundWorker1.RunWorkerAsync(filter);
+            backgroundWorker.RunWorkerAsync(filter);
         }
 
         private void алгоритмСобеляToolStripMenuItem_Click(object sender, EventArgs e)
@@ -173,8 +232,28 @@ namespace LabFilters
             executeLabel.Text = "Идёт выполнение: Алгоритм Собеля";
 
             Filters filter = new SobelFilter();
-            backgroundWorker1.RunWorkerAsync(filter);
+            backgroundWorker.RunWorkerAsync(filter);
         }
 
+        private void шагНазадlStripMenuItem_Click(object sender, EventArgs e)
+        {
+            undoAction();
+        }
+
+        private void шагВпередToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            redoAction();
+        }
+
+        private void настройкиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SettingsForm settingsForm = new SettingsForm();
+            settingsForm.HistoryValue = maxHistorySize;
+
+            if (settingsForm.ShowDialog() == DialogResult.OK)
+            {
+                maxHistorySize = settingsForm.HistoryValue;
+            }
+        }
     }
 }
