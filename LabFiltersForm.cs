@@ -24,6 +24,7 @@ namespace LabFilters
             this.KeyPreview = true;
 
             HotkeysManager hotkeysManager = new HotkeysManager(undoStack, redoStack, undoAction, redoAction);
+            this.KeyDown += new KeyEventHandler(hotkeysManager.HandleHotkey);
         }
 
 
