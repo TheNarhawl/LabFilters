@@ -34,18 +34,58 @@ namespace LabFilters
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("что-то пошло не так...");
+                    MessageBox.Show("что-то пошло не так..." + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
 
         }
 
+        private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+
+            saveFileDialog.Filter = "PNG Image|*.png|JPEG Image|*.jpg;*.jpeg|Bitmap Image|*.bmp";
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    Bitmap bitmap = new Bitmap(pictureBox.Image);
+
+                    bitmap.Save(saveFileDialog.FileName);
+
+                    MessageBox.Show("Изображение успешно сохранено!");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Произошла ошибка при сохранении: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            Bitmap newImage = ((Filters)e.Argument).processImage(image, backgroundWorker1);
+            Bitmap imageCopy;
+            lock (image)
+                imageCopy = new Bitmap(image);
+
+
+
+            this.Invoke((MethodInvoker)delegate {
+                progressBar1.Visible = true;
+                button1.Visible = true;
+                executeLabel.Visible = true;
+
+                executeLabel.BringToFront();
+            });
+
+            Bitmap newImage = ((Filters)e.Argument).processImage(imageCopy, backgroundWorker1);
+
             if (backgroundWorker1.CancellationPending != true)
                 image = newImage;
+            else
+                e.Cancel = true;
+
         }
 
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -59,6 +99,11 @@ namespace LabFilters
                 pictureBox.Image = image;
                 pictureBox.Refresh();
             }
+
+            progressBar1.Visible = false;
+            button1.Visible = false;
+            executeLabel.Visible = false;
+
             progressBar1.Value = 0;
         }
 
@@ -68,6 +113,8 @@ namespace LabFilters
         }
         private void инверсияToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            executeLabel.Text = "Идёт выполнение: Инверсия";
+
             InvertFilter filter = new InvertFilter();
             backgroundWorker1.RunWorkerAsync(filter);
 
@@ -75,13 +122,57 @@ namespace LabFilters
 
         private void размытиеToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            executeLabel.Text = "Идёт выполнение: Размытие";
+
             Filters filter = new BlurFilter();
             backgroundWorker1.RunWorkerAsync(filter);
         }
 
         private void размытиеПоГауссуToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            executeLabel.Text = "Идёт выполнение: Размытие по Гауссу";
+
             Filters filter = new GaussianFilter();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void чернобелыйToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт выполнение: Черно-белый";
+
+            Filters filter = new BlackAndWhiteFilter();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void сепияToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт выполнение: Сепия";
+
+            Filters filter = new SepiaFilter();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void увеличитьЯркостьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт выполнение: Увеличить яркость";
+
+            Filters filter = new IncreaseBrightness();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void увеличитьРезкостьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт выполнение: Увеличить резкость";
+
+            Filters filter = new SharpenFilter();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void алгоритмСобеляToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт выполнение: Алгоритм Собеля";
+
+            Filters filter = new SobelFilter();
             backgroundWorker1.RunWorkerAsync(filter);
         }
 

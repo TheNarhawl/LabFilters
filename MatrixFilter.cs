@@ -29,9 +29,9 @@ namespace LabFilters
                     int idX = Clamp(x + k, 0, sourceImage.Width - 1);
                     int idY = Clamp(y + l, 0, sourceImage.Height - 1);
                     Color neighborColor = sourceImage.GetPixel(idX, idY);
-                    resultR += neighborColor.R * kernel[k + radiusX, 1 + radiusY];
-                    resultG += neighborColor.G * kernel[k + radiusX, 1 + radiusY];
-                    resultB += neighborColor.B * kernel[k + radiusX, 1 + radiusY];
+                    resultR += neighborColor.R * kernel[k + radiusX, l + radiusY];
+                    resultG += neighborColor.G * kernel[k + radiusX, l + radiusY];
+                    resultB += neighborColor.B * kernel[k + radiusX, l + radiusY];
 
                 }
 
