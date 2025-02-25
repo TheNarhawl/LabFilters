@@ -97,6 +97,8 @@ namespace LabFilters
             }
         }
 
+
+
         private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -122,28 +124,47 @@ namespace LabFilters
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            
             Bitmap imageCopy;
             lock (image)
                 imageCopy = new Bitmap(image);
 
             this.Invoke((MethodInvoker)delegate {
                 saveInHistory();
-
                 progressBar.Visible = true;
                 button1.Visible = true;
                 executeLabel.Visible = true;
-
                 executeLabel.BringToFront();
             });
 
-            Bitmap newImage = ((Filters)e.Argument).processImage(imageCopy, backgroundWorker);
+            Bitmap newImage = imageCopy;
+
+            if (e.Argument is Filters)
+            {
+                Filters filter = (Filters)e.Argument;
+                newImage = filter.processImage(imageCopy, backgroundWorker);
+            }
+            else if (e.Argument is List<Filters>)
+            {
+                List<Filters> filters = (List<Filters>)e.Argument;
+                foreach (var filter in filters)
+                {
+                    if (backgroundWorker.CancellationPending)
+                        break;
+
+                    newImage = filter.processImage(newImage, backgroundWorker);
+
+                    this.Invoke((MethodInvoker)delegate {
+                        image = new Bitmap(newImage);
+                        pictureBox.Image = image;
+                        pictureBox.Refresh();
+                    });
+                }
+            }
 
             if (backgroundWorker.CancellationPending != true)
-                    image = newImage;
+                image = newImage;
             else
                 e.Cancel = true;
-
         }
 
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -164,6 +185,24 @@ namespace LabFilters
             executeLabel.Visible = false;
 
             progressBar.Value = 0;
+        }
+
+        private void ApplyFiltersSequentially(List<Filters> filters)
+        {
+            Bitmap currentImage = new Bitmap(image); // Копируем исходное изображение
+
+            foreach (var filter in filters)
+            {
+                if (backgroundWorker.CancellationPending)
+                    break;
+
+                currentImage = filter.processImage(currentImage, backgroundWorker); // Применяем фильтр
+                this.Invoke((MethodInvoker)delegate {
+                    image = new Bitmap(currentImage); // Обновляем изображение
+                    pictureBox.Image = image; // Обновляем PictureBox
+                    pictureBox.Refresh();
+                });
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -235,6 +274,59 @@ namespace LabFilters
             Filters filter = new SobelFilter();
             backgroundWorker.RunWorkerAsync(filter);
         }
+        private void размытиеВДвиженииToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт выполнение: Размытие в движении";
+
+            Filters filter = new MotionBlurFilter(5);
+            backgroundWorker.RunWorkerAsync(filter);
+        }
+        private void эффектстеклаToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт волнение: Эффект \"стекла\"";
+
+            Filters filter = new GlassFilter();
+            backgroundWorker.RunWorkerAsync(filter);
+        }
+        private void тиснениеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт волнение: Тиснение";
+
+            Filters filter = new EmbossFilter();
+            backgroundWorker.RunWorkerAsync(filter);
+        }
+        private void усилитьКонтурыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт волнение: Усилить контуры";
+
+            Filters filter = new MaximumFilter(1);
+            backgroundWorker.RunWorkerAsync(filter);
+        }
+        private void светящиесяКраяToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт волнение: Светящиеся края";
+
+            List<Filters> filters = new List<Filters>
+            {
+                new MedianFilter(2),
+                new SobelFilter(),
+                new MaximumFilter(1)
+            };
+
+            backgroundWorker.RunWorkerAsync(filters);
+        }
+        private void повернутьНа90ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт выполнение: 90 градусов по ч.с.";
+            Filters filter = new RotateImage(-90.0, pictureBox.Image.Width / 2, pictureBox.Image.Height / 2);
+            backgroundWorker.RunWorkerAsync(filter);
+        }
+        private void повернутьНа90ГрадусовПротивЧсToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт выполнение: 90 градусов против ч.с.";
+            Filters filter = new RotateImage(90.0, pictureBox.Image.Width / 2, pictureBox.Image.Height / 2);
+            backgroundWorker.RunWorkerAsync(filter);
+        }
 
         private void шагНазадlStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -256,5 +348,6 @@ namespace LabFilters
                 maxHistorySize = settingsForm.HistoryValue;
             }
         }
+
     }
 }

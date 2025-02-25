@@ -48,7 +48,13 @@
   <ItemGroup>
     <Compile Include="BlackAndWhiteFilter.cs" />
     <Compile Include="BlurFilter.cs" />
+    <Compile Include="EmbossFilter.cs" />
     <Compile Include="Filters.cs" />
+    <Compile Include="GlassFilter.cs" />
+    <Compile Include="MaximumFilter.cs" />
+    <Compile Include="MedianFilter.cs" />
+    <Compile Include="MotionBlurFilter.cs" />
+    <Compile Include="RotateImage.cs" />
     <Compile Include="SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>

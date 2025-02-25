@@ -52,6 +52,14 @@
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.button1 = new System.Windows.Forms.Button();
             this.executeLabel = new System.Windows.Forms.Label();
+            this.размытиеВДвиженииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.эффектстеклаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.тиснениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.усилитьКонтурыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.светящиесяКраяToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.изображениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.повернутьНа90ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.повернутьНа90ГрадусовПротивЧсToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -78,7 +86,8 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.fIltersToolStripMenuItem,
-            this.редактированиеToolStripMenuItem});
+            this.редактированиеToolStripMenuItem,
+            this.изображениеToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 2, 0, 2);
@@ -130,7 +139,9 @@
             this.инверсияToolStripMenuItem,
             this.чернобелыйToolStripMenuItem,
             this.сепияToolStripMenuItem,
-            this.увеличитьЯркостьToolStripMenuItem});
+            this.увеличитьЯркостьToolStripMenuItem,
+            this.эффектстеклаToolStripMenuItem,
+            this.усилитьКонтурыToolStripMenuItem});
             this.точечныеToolStripMenuItem.Name = "точечныеToolStripMenuItem";
             this.точечныеToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.точечныеToolStripMenuItem.Text = "Точечные";
@@ -169,7 +180,10 @@
             this.размытиеToolStripMenuItem,
             this.размытиеПоГауссуToolStripMenuItem,
             this.увеличитьРезкостьToolStripMenuItem,
-            this.алгоритмСобеляToolStripMenuItem});
+            this.алгоритмСобеляToolStripMenuItem,
+            this.размытиеВДвиженииToolStripMenuItem,
+            this.тиснениеToolStripMenuItem,
+            this.светящиесяКраяToolStripMenuItem});
             this.матричныеToolStripMenuItem.Name = "матричныеToolStripMenuItem";
             this.матричныеToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.матричныеToolStripMenuItem.Text = "Матричные";
@@ -177,28 +191,28 @@
             // размытиеToolStripMenuItem
             // 
             this.размытиеToolStripMenuItem.Name = "размытиеToolStripMenuItem";
-            this.размытиеToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.размытиеToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.размытиеToolStripMenuItem.Text = "Размытие";
             this.размытиеToolStripMenuItem.Click += new System.EventHandler(this.размытиеToolStripMenuItem_Click);
             // 
             // размытиеПоГауссуToolStripMenuItem
             // 
             this.размытиеПоГауссуToolStripMenuItem.Name = "размытиеПоГауссуToolStripMenuItem";
-            this.размытиеПоГауссуToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.размытиеПоГауссуToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.размытиеПоГауссуToolStripMenuItem.Text = "Размытие по Гауссу";
             this.размытиеПоГауссуToolStripMenuItem.Click += new System.EventHandler(this.размытиеПоГауссуToolStripMenuItem_Click);
             // 
             // увеличитьРезкостьToolStripMenuItem
             // 
             this.увеличитьРезкостьToolStripMenuItem.Name = "увеличитьРезкостьToolStripMenuItem";
-            this.увеличитьРезкостьToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.увеличитьРезкостьToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.увеличитьРезкостьToolStripMenuItem.Text = "Увеличить резкость";
             this.увеличитьРезкостьToolStripMenuItem.Click += new System.EventHandler(this.увеличитьРезкостьToolStripMenuItem_Click);
             // 
             // алгоритмСобеляToolStripMenuItem
             // 
             this.алгоритмСобеляToolStripMenuItem.Name = "алгоритмСобеляToolStripMenuItem";
-            this.алгоритмСобеляToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.алгоритмСобеляToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             this.алгоритмСобеляToolStripMenuItem.Text = "Алгоритм Собеля";
             this.алгоритмСобеляToolStripMenuItem.Click += new System.EventHandler(this.алгоритмСобеляToolStripMenuItem_Click);
             // 
@@ -283,6 +297,65 @@
             this.executeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.executeLabel.Visible = false;
             // 
+            // размытиеВДвиженииToolStripMenuItem
+            // 
+            this.размытиеВДвиженииToolStripMenuItem.Name = "размытиеВДвиженииToolStripMenuItem";
+            this.размытиеВДвиженииToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.размытиеВДвиженииToolStripMenuItem.Text = "Размытие в движении";
+            this.размытиеВДвиженииToolStripMenuItem.Click += new System.EventHandler(this.размытиеВДвиженииToolStripMenuItem_Click);
+            // 
+            // эффектстеклаToolStripMenuItem
+            // 
+            this.эффектстеклаToolStripMenuItem.Name = "эффектстеклаToolStripMenuItem";
+            this.эффектстеклаToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.эффектстеклаToolStripMenuItem.Text = "Эффект \"стекла\"";
+            this.эффектстеклаToolStripMenuItem.Click += new System.EventHandler(this.эффектстеклаToolStripMenuItem_Click);
+            // 
+            // тиснениеToolStripMenuItem
+            // 
+            this.тиснениеToolStripMenuItem.Name = "тиснениеToolStripMenuItem";
+            this.тиснениеToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.тиснениеToolStripMenuItem.Text = "Тиснение";
+            this.тиснениеToolStripMenuItem.Click += new System.EventHandler(this.тиснениеToolStripMenuItem_Click);
+            // 
+            // усилитьКонтурыToolStripMenuItem
+            // 
+            this.усилитьКонтурыToolStripMenuItem.Name = "усилитьКонтурыToolStripMenuItem";
+            this.усилитьКонтурыToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.усилитьКонтурыToolStripMenuItem.Text = "Усилить контуры";
+            this.усилитьКонтурыToolStripMenuItem.Click += new System.EventHandler(this.усилитьКонтурыToolStripMenuItem_Click);
+            // 
+            // светящиесяКраяToolStripMenuItem
+            // 
+            this.светящиесяКраяToolStripMenuItem.Name = "светящиесяКраяToolStripMenuItem";
+            this.светящиесяКраяToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.светящиесяКраяToolStripMenuItem.Text = "Светящиеся края";
+            this.светящиесяКраяToolStripMenuItem.Click += new System.EventHandler(this.светящиесяКраяToolStripMenuItem_Click);
+            // 
+            // изображениеToolStripMenuItem
+            // 
+            this.изображениеToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.повернутьНа90ToolStripMenuItem,
+            this.повернутьНа90ГрадусовПротивЧсToolStripMenuItem});
+            this.изображениеToolStripMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
+            this.изображениеToolStripMenuItem.Name = "изображениеToolStripMenuItem";
+            this.изображениеToolStripMenuItem.Size = new System.Drawing.Size(95, 20);
+            this.изображениеToolStripMenuItem.Text = "Изображение";
+            // 
+            // повернутьНа90ToolStripMenuItem
+            // 
+            this.повернутьНа90ToolStripMenuItem.Name = "повернутьНа90ToolStripMenuItem";
+            this.повернутьНа90ToolStripMenuItem.Size = new System.Drawing.Size(280, 22);
+            this.повернутьНа90ToolStripMenuItem.Text = "Повернуть на 90 градусов по ч.с.";
+            this.повернутьНа90ToolStripMenuItem.Click += new System.EventHandler(this.повернутьНа90ToolStripMenuItem_Click);
+            // 
+            // повернутьНа90ГрадусовПротивЧсToolStripMenuItem
+            // 
+            this.повернутьНа90ГрадусовПротивЧсToolStripMenuItem.Name = "повернутьНа90ГрадусовПротивЧсToolStripMenuItem";
+            this.повернутьНа90ГрадусовПротивЧсToolStripMenuItem.Size = new System.Drawing.Size(280, 22);
+            this.повернутьНа90ГрадусовПротивЧсToolStripMenuItem.Text = "Повернуть на 90 градусов против ч.с.";
+            this.повернутьНа90ГрадусовПротивЧсToolStripMenuItem.Click += new System.EventHandler(this.повернутьНа90ГрадусовПротивЧсToolStripMenuItem_Click);
+            // 
             // LabFiltersForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -333,6 +406,14 @@
         private System.Windows.Forms.ToolStripMenuItem шагНазадlStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem шагВпередToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem настройкиToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem размытиеВДвиженииToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem эффектстеклаToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem тиснениеToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem усилитьКонтурыToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem светящиесяКраяToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem изображениеToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem повернутьНа90ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem повернутьНа90ГрадусовПротивЧсToolStripMenuItem;
     }
 }
 
