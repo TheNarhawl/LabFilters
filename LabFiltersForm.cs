@@ -124,6 +124,11 @@ namespace LabFilters
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
+            if (image == null || pictureBox == null)
+            {
+                MessageBox.Show("Пожалуйста, загрузите изображение перед применением фильтра.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             Bitmap imageCopy;
             lock (image)
                 imageCopy = new Bitmap(image);
@@ -158,11 +163,24 @@ namespace LabFilters
                         pictureBox.Refresh();
                     });
                 }
+            }
+            else if (e.Argument is object[] topHatArgs && topHatArgs.Length == 2)
+            {
+                Bitmap originalImage = topHatArgs[0] as Bitmap;
+                List<Filters> topHatFilters = topHatArgs[1] as List<Filters>;
 
-                if (filters.Exists(f => f is ErosionFilter) && filters.Exists(f => f is DilationFilter))
+                if (originalImage == null || topHatFilters == null)
                 {
-                    TopHatFilter topHatFilter = new TopHatFilter(imageCopy, newImage);
-                    newImage = topHatFilter.processImage(imageCopy, backgroundWorker);
+                    MessageBox.Show("Ошибка: неверные аргументы для Top hat.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                foreach (var filter in topHatFilters)
+                {
+                    if (backgroundWorker.CancellationPending)
+                        break;
+
+                    newImage = filter.processImage(newImage, backgroundWorker);
 
                     this.Invoke((MethodInvoker)delegate {
                         image = new Bitmap(newImage);
@@ -170,6 +188,15 @@ namespace LabFilters
                         pictureBox.Refresh();
                     });
                 }
+
+                TopHatFilter topHatFilter = new TopHatFilter(originalImage, newImage);
+                newImage = topHatFilter.processImage(originalImage, backgroundWorker);
+
+                this.Invoke((MethodInvoker)delegate {
+                    image = new Bitmap(newImage);
+                    pictureBox.Image = image;
+                    pictureBox.Refresh();
+                });
             }
 
 
@@ -447,7 +474,10 @@ namespace LabFilters
                             new ErosionFilter(kernel),
                             new DilationFilter(kernel),
                         };
-                        backgroundWorker.RunWorkerAsync(topHatFilters);
+
+                        Bitmap originalImageCopy = new Bitmap(image);
+
+                        backgroundWorker.RunWorkerAsync(new object[] { originalImageCopy, topHatFilters });
                         break;
                     default:
                         MessageBox.Show("Неверный выбор эффекта.");
