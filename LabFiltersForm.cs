@@ -143,9 +143,8 @@ namespace LabFilters
                 Filters filter = (Filters)e.Argument;
                 newImage = filter.processImage(imageCopy, backgroundWorker);
             }
-            else if (e.Argument is List<Filters>)
+            else if (e.Argument is List<Filters> filters)
             {
-                List<Filters> filters = (List<Filters>)e.Argument;
                 foreach (var filter in filters)
                 {
                     if (backgroundWorker.CancellationPending)
@@ -159,7 +158,20 @@ namespace LabFilters
                         pictureBox.Refresh();
                     });
                 }
+
+                if (filters.Exists(f => f is ErosionFilter) && filters.Exists(f => f is DilationFilter))
+                {
+                    TopHatFilter topHatFilter = new TopHatFilter(imageCopy, newImage);
+                    newImage = topHatFilter.processImage(imageCopy, backgroundWorker);
+
+                    this.Invoke((MethodInvoker)delegate {
+                        image = new Bitmap(newImage);
+                        pictureBox.Image = image;
+                        pictureBox.Refresh();
+                    });
+                }
             }
+
 
             if (backgroundWorker.CancellationPending != true)
                 image = newImage;
@@ -187,23 +199,23 @@ namespace LabFilters
             progressBar.Value = 0;
         }
 
-        private void ApplyFiltersSequentially(List<Filters> filters)
-        {
-            Bitmap currentImage = new Bitmap(image); // Копируем исходное изображение
+        //private void ApplyFiltersSequentially(List<Filters> filters)
+        //{
+        //    Bitmap currentImage = new Bitmap(image);
 
-            foreach (var filter in filters)
-            {
-                if (backgroundWorker.CancellationPending)
-                    break;
+        //    foreach (var filter in filters)
+        //    {
+        //        if (backgroundWorker.CancellationPending)
+        //            break;
 
-                currentImage = filter.processImage(currentImage, backgroundWorker); // Применяем фильтр
-                this.Invoke((MethodInvoker)delegate {
-                    image = new Bitmap(currentImage); // Обновляем изображение
-                    pictureBox.Image = image; // Обновляем PictureBox
-                    pictureBox.Refresh();
-                });
-            }
-        }
+        //        currentImage = filter.processImage(currentImage, backgroundWorker);
+        //        this.Invoke((MethodInvoker)delegate {
+        //            image = new Bitmap(currentImage);
+        //            pictureBox.Image = image;
+        //            pictureBox.Refresh();
+        //        });
+        //    }
+        //}
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -327,10 +339,41 @@ namespace LabFilters
             Filters filter = new RotateImage(-90.0);
             backgroundWorker.RunWorkerAsync(filter);
         }
+        private void волны1ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт выполнение: Волны 1";
+            Filters filter = new WaveFilterOne();
+            backgroundWorker.RunWorkerAsync(filter);
+        }
+
         private void волны2ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            executeLabel.Text = "Волны 2";
+            executeLabel.Text = "Идёт выполнение: Волны 2";
             Filters filter = new WaveFilterTwo();
+            backgroundWorker.RunWorkerAsync(filter);
+        }
+        private void линейноеРастяжениеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт выполнение: Линейное растяжение";
+            Filters filter = new LinearStretching();
+            backgroundWorker.RunWorkerAsync(filter);
+        }
+        private void операторToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт выполнение: Оператор Прюитта";
+            Filters filter = new PruittFilter();
+            backgroundWorker.RunWorkerAsync(filter);
+        }
+        private void операторЩалляToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт выполнение: Оператор Щарра";
+            Filters filter = new ScharrFilter();
+            backgroundWorker.RunWorkerAsync(filter);
+        }
+        private void идеальныйОтражательToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт выполнение: Идеальный отражатель";
+            Filters filter = new PerfectReflector();
             backgroundWorker.RunWorkerAsync(filter);
         }
 
@@ -355,12 +398,63 @@ namespace LabFilters
             }
         }
 
-        private void волны1ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void другоеToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            executeLabel.Text = "Волны 1";
-            Filters filter = new WaveFilterOne();
-            backgroundWorker.RunWorkerAsync(filter);
-        }
+            OtherEffectSelectionForm otherForm = new OtherEffectSelectionForm();
+            if (otherForm.ShowDialog() == DialogResult.OK)
+            {
+                string selectedEffect = otherForm.SelectedEffect;
+                float[,] kernel = otherForm.Kernel;
 
+                Filters filter = null;
+
+                switch (selectedEffect)
+                {
+                    case "Dilation":
+                        executeLabel.Text = "Идёт выполнение: Dilation";
+                        filter = new DilationFilter(kernel);
+                        backgroundWorker.RunWorkerAsync(filter);
+                        break;
+                    case "Erosion":
+                        executeLabel.Text = "Идёт выполнение: Erosion";
+                        filter = new ErosionFilter(kernel);
+                        backgroundWorker.RunWorkerAsync(filter);
+                        break;
+                    case "Opening":
+                        executeLabel.Text = "Идёт выполнение: Opening";
+                        List<Filters> openingFilters = new List<Filters>
+                        {
+                            new ErosionFilter(kernel),
+                            new DilationFilter(kernel),
+                        };
+
+                        backgroundWorker.RunWorkerAsync(openingFilters);
+                        break;
+                    case "Closing":
+                        executeLabel.Text = "Идёт выполнение: Closing";
+                        List<Filters> closingFilters = new List<Filters>
+                        {
+                            new DilationFilter(kernel),
+                            new ErosionFilter(kernel),
+                        };
+
+                        backgroundWorker.RunWorkerAsync(closingFilters);
+                        break;
+                    case "Top hat":
+                        executeLabel.Text = "Идёт выполнение: Top hat";
+                        List<Filters> topHatFilters = new List<Filters>
+                        {
+                            new ErosionFilter(kernel),
+                            new DilationFilter(kernel),
+                        };
+                        backgroundWorker.RunWorkerAsync(topHatFilters);
+                        break;
+                    default:
+                        MessageBox.Show("Неверный выбор эффекта.");
+                        break;
+                }
+            }
+
+        }
     }
 }
