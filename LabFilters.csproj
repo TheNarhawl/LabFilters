@@ -77,6 +77,8 @@
     <Compile Include="SepiaFilter.cs" />
     <Compile Include="SharpenFilter.cs" />
     <Compile Include="SobelFilter.cs" />
+    <Compile Include="WaveFilterOne.cs" />
+    <Compile Include="WaveFilterTwo.cs" />
     <EmbeddedResource Include="LabFiltersForm.resx">
       <DependentUpon>LabFiltersForm.cs</DependentUpon>
     </EmbeddedResource>

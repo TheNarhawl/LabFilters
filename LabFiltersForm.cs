@@ -318,13 +318,19 @@ namespace LabFilters
         private void повернутьНа90ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             executeLabel.Text = "Идёт выполнение: 90 градусов по ч.с.";
-            Filters filter = new RotateImage(-90.0, pictureBox.Image.Width / 2, pictureBox.Image.Height / 2);
+            Filters filter = new RotateImage(90.0);
             backgroundWorker.RunWorkerAsync(filter);
         }
         private void повернутьНа90ГрадусовПротивЧсToolStripMenuItem_Click(object sender, EventArgs e)
         {
             executeLabel.Text = "Идёт выполнение: 90 градусов против ч.с.";
-            Filters filter = new RotateImage(90.0, pictureBox.Image.Width / 2, pictureBox.Image.Height / 2);
+            Filters filter = new RotateImage(-90.0);
+            backgroundWorker.RunWorkerAsync(filter);
+        }
+        private void волны2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Волны 2";
+            Filters filter = new WaveFilterTwo();
             backgroundWorker.RunWorkerAsync(filter);
         }
 
@@ -347,6 +353,13 @@ namespace LabFilters
             {
                 maxHistorySize = settingsForm.HistoryValue;
             }
+        }
+
+        private void волны1ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Волны 1";
+            Filters filter = new WaveFilterOne();
+            backgroundWorker.RunWorkerAsync(filter);
         }
 
     }
