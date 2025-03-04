@@ -57,6 +57,7 @@
             this.операторПриюттаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.операторToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.операторЩарраToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.другоеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.редактированиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.шагНазадlStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.шагВпередToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,7 +69,7 @@
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.button1 = new System.Windows.Forms.Button();
             this.executeLabel = new System.Windows.Forms.Label();
-            this.другоеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.смещениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -153,7 +154,8 @@
             this.усилитьКонтурыToolStripMenuItem,
             this.волныToolStripMenuItem,
             this.линейноеРастяжениеToolStripMenuItem,
-            this.идеальныйОтражательToolStripMenuItem});
+            this.идеальныйОтражательToolStripMenuItem,
+            this.смещениеToolStripMenuItem});
             this.точечныеToolStripMenuItem.Name = "точечныеToolStripMenuItem";
             this.точечныеToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.точечныеToolStripMenuItem.Text = "Точечные";
@@ -325,6 +327,13 @@
             this.операторЩарраToolStripMenuItem.Text = "Оператор Щарра";
             this.операторЩарраToolStripMenuItem.Click += new System.EventHandler(this.операторЩалляToolStripMenuItem_Click);
             // 
+            // другоеToolStripMenuItem
+            // 
+            this.другоеToolStripMenuItem.Name = "другоеToolStripMenuItem";
+            this.другоеToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
+            this.другоеToolStripMenuItem.Text = "Другое...";
+            this.другоеToolStripMenuItem.Click += new System.EventHandler(this.другоеToolStripMenuItem_Click);
+            // 
             // редактированиеToolStripMenuItem
             // 
             this.редактированиеToolStripMenuItem.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
@@ -430,12 +439,12 @@
             this.executeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.executeLabel.Visible = false;
             // 
-            // другоеToolStripMenuItem
+            // смещениеToolStripMenuItem
             // 
-            this.другоеToolStripMenuItem.Name = "другоеToolStripMenuItem";
-            this.другоеToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
-            this.другоеToolStripMenuItem.Text = "Другое...";
-            this.другоеToolStripMenuItem.Click += new System.EventHandler(this.другоеToolStripMenuItem_Click);
+            this.смещениеToolStripMenuItem.Name = "смещениеToolStripMenuItem";
+            this.смещениеToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+            this.смещениеToolStripMenuItem.Text = "Смещение";
+            this.смещениеToolStripMenuItem.Click += new System.EventHandler(this.смещениеToolStripMenuItem_Click);
             // 
             // LabFiltersForm
             // 
@@ -504,6 +513,7 @@
         private System.Windows.Forms.ToolStripMenuItem операторЩарраToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem идеальныйОтражательToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem другоеToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem смещениеToolStripMenuItem;
     }
 }
 

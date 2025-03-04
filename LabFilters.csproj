@@ -57,6 +57,7 @@
     <Compile Include="MaximumFilter.cs" />
     <Compile Include="MedianFilter.cs" />
     <Compile Include="MotionBlurFilter.cs" />
+    <Compile Include="OffsetFilter.cs" />
     <Compile Include="OtherEffectSelectionForm.cs">
       <SubType>Form</SubType>
     </Compile>

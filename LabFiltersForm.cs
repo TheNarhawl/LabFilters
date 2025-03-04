@@ -403,6 +403,12 @@ namespace LabFilters
             Filters filter = new PerfectReflector();
             backgroundWorker.RunWorkerAsync(filter);
         }
+        private void смещениеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт выполнение: Смещение";
+            Filters filter = new OffsetFilter();
+            backgroundWorker.RunWorkerAsync(filter);
+        }
 
         private void шагНазадlStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -486,5 +492,6 @@ namespace LabFilters
             }
 
         }
+
     }
 }
