@@ -81,12 +81,30 @@ namespace LabFilters
         {
             try
             {
-                pictureBox.Image = (Bitmap)Clipboard.GetDataObject().GetData(DataFormats.Bitmap);
-                pictureBox.Refresh();
+                if (Clipboard.ContainsImage())
+                {
+                    using (var clipboardImage = Clipboard.GetImage())
+                    {
+                        if (clipboardImage != null)
+                        {
+                            image = new Bitmap(clipboardImage);
+                            pictureBox.Image = image;
+                            pictureBox.Refresh();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Не удалось получить изображение из буфера обмена.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Буфер обмена не содержит изображения.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Что-то пошло не так..." + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Что-то пошло не так: " + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -177,6 +195,14 @@ namespace LabFilters
                     //    pictureBox.Refresh();
                     //});
                 }
+            }
+            else if (e.Argument is ThreePartFilter threePartFilter)
+            {
+                newImage = ApplyThreeFilters(imageCopy, threePartFilter.Filter1, threePartFilter.Filter2, threePartFilter.Filter3, backgroundWorker);
+            }
+            else if (e.Argument is TwoPartFilter twoPartFilter)
+            {
+                newImage = ApplyTwoFilters(imageCopy, twoPartFilter.LeftFilter, twoPartFilter.RightFilter, backgroundWorker);
             }
             else if (e.Argument is object[] topHatArgs && topHatArgs.Length == 2)
             {
@@ -369,6 +395,15 @@ namespace LabFilters
 
             backgroundWorker.RunWorkerAsync(filters);
         }
+
+        private void медианныйФильтрToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт выполнение: Медианный фильтр";
+
+            Filters filter = new MedianFilter(2);
+            backgroundWorker.RunWorkerAsync(filter);
+
+        }
         private void повернутьНа90ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             executeLabel.Text = "Идёт выполнение: 90 градусов по ч.с.";
@@ -513,5 +548,120 @@ namespace LabFilters
 
         }
 
+        private void testToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт выполнение: Разделение на три фильтра";
+
+            Filters filter1 = new WaveFilterOne();
+            Filters filter2 = new WaveFilterTwo();
+            Filters filter3 = new InvertFilter();
+
+            ThreePartFilter threePartFilter = new ThreePartFilter(filter1, filter2, filter3);
+
+            backgroundWorker.RunWorkerAsync(threePartFilter);
+        }
+
+        private Bitmap ApplyThreeFilters(Bitmap sourceImage, Filters filter1, Filters filter2, Filters filter3, BackgroundWorker worker)
+        {
+            int width = sourceImage.Width;
+            int height = sourceImage.Height;
+
+            int partWidth = width / 3;
+
+            Bitmap part1 = new Bitmap(partWidth, height);
+            Bitmap part2 = new Bitmap(partWidth, height);
+            Bitmap part3 = new Bitmap(width - 2 * partWidth, height);
+
+            for (int x = 0; x < partWidth; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    part1.SetPixel(x, y, sourceImage.GetPixel(x, y));
+                    part2.SetPixel(x, y, sourceImage.GetPixel(x + partWidth, y));
+                    part3.SetPixel(x, y, sourceImage.GetPixel(x + 2 * partWidth, y));
+                }
+            }
+
+            Bitmap filteredPart1 = filter1.processImage(part1, worker);
+            Bitmap filteredPart2 = filter2.processImage(part2, worker);
+            Bitmap filteredPart3 = filter3.processImage(part3, worker);
+
+            Bitmap resultImage = new Bitmap(width, height);
+
+            for (int x = 0; x < partWidth; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    resultImage.SetPixel(x, y, filteredPart1.GetPixel(x, y));
+                    resultImage.SetPixel(x + partWidth, y, filteredPart2.GetPixel(x, y));
+                    resultImage.SetPixel(x + 2 * partWidth, y, filteredPart3.GetPixel(x, y));
+                }
+            }
+
+            return resultImage;
+        }
+
+        private void test2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            executeLabel.Text = "Идёт выполнение: Разделение на два фильтра";
+
+            Filters filter1 = new WaveFilterOne();
+            Filters filter2 = new WaveFilterTwo();
+
+            TwoPartFilter twoPartFilter = new TwoPartFilter(filter1, filter2);
+
+            backgroundWorker.RunWorkerAsync(twoPartFilter);
+
+        }
+
+        private Bitmap ApplyTwoFilters(Bitmap sourceImage, Filters topFilter, Filters bottomFilter, BackgroundWorker worker)
+        {
+            int width = sourceImage.Width;
+            int height = sourceImage.Height;
+
+            int halfHeight = height / 2;
+
+            Bitmap topPart = new Bitmap(width, halfHeight);
+            Bitmap bottomPart = new Bitmap(width, height - halfHeight);
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < halfHeight; y++)
+                {
+                    topPart.SetPixel(x, y, sourceImage.GetPixel(x, y));
+                }
+            }
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = halfHeight; y < height; y++)
+                {
+                    bottomPart.SetPixel(x, y - halfHeight, sourceImage.GetPixel(x, y));
+                }
+            }
+
+            Bitmap filteredTop = topFilter.processImage(topPart, worker);
+            Bitmap filteredBottom = bottomFilter.processImage(bottomPart, worker);
+
+            Bitmap resultImage = new Bitmap(width, height);
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < halfHeight; y++)
+                {
+                    resultImage.SetPixel(x, y, filteredTop.GetPixel(x, y));
+                }
+            }
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = halfHeight; y < height; y++)
+                {
+                    resultImage.SetPixel(x, y, filteredBottom.GetPixel(x, y - halfHeight));
+                }
+            }
+
+            return resultImage;
+        }
     }
 }

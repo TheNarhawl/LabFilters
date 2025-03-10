@@ -90,7 +90,9 @@
     <Compile Include="SepiaFilter.cs" />
     <Compile Include="SharpenFilter.cs" />
     <Compile Include="SobelFilter.cs" />
+    <Compile Include="ThreePartFilter.cs" />
     <Compile Include="TopHatFilter.cs" />
+    <Compile Include="TwoPartFilter.cs" />
     <Compile Include="WaveFilterOne.cs" />
     <Compile Include="WaveFilterTwo.cs" />
     <EmbeddedResource Include="LabFiltersForm.resx">
