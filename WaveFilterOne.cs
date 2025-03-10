@@ -11,10 +11,10 @@ namespace LabFilters
     {
         protected override Color calculateNewPixelColor(Bitmap sourceImage, int x, int y)
         {
-            int newX = (int)(x + 20 * Math.Sin(2 * Math.PI * y / 60));
-            int newY = y;
+            int newX = x;
+            int newY = (int)(y + 20 * Math.Cos(2 * Math.PI * x / 60));
 
-            if (newX >= 0 && newX < sourceImage.Width)
+            if (newY >= 0 && newY < sourceImage.Height)
             {
                 return sourceImage.GetPixel(newX, newY);
             }

@@ -14,13 +14,15 @@ namespace LabFilters
         private Stack<Bitmap> redoStack;
         private Action undoAction;
         private Action redoAction;
+        private Action pasteFromClipboard;
 
-        public HotkeysManager(Stack<Bitmap> undoStack, Stack<Bitmap> redoStack, Action undoAction, Action redoAction)
+        public HotkeysManager(Stack<Bitmap> undoStack, Stack<Bitmap> redoStack, Action undoAction, Action redoAction, Action pasteFromClipboard)
         {
             this.undoStack = undoStack;
             this.redoStack = redoStack;
             this.undoAction = undoAction;
             this.redoAction = redoAction;
+            this.pasteFromClipboard = pasteFromClipboard;
         }
 
         public void HandleHotkey(object sender, KeyEventArgs e)
@@ -35,6 +37,12 @@ namespace LabFilters
             {
                 redoAction();
                 e.SuppressKeyPress = true; 
+            }
+
+            else if (e.Control && e.KeyCode == Keys.V)
+            {
+                pasteFromClipboard();
+                e.SuppressKeyPress = true;
             }
         }
     }

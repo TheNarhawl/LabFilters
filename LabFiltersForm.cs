@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace LabFilters
 {
@@ -23,7 +24,7 @@ namespace LabFilters
             InitializeComponent();
             this.KeyPreview = true;
 
-            HotkeysManager hotkeysManager = new HotkeysManager(undoStack, redoStack, undoAction, redoAction);
+            HotkeysManager hotkeysManager = new HotkeysManager(undoStack, redoStack, undoAction, redoAction, pasteFromClipboard);
             this.KeyDown += new KeyEventHandler(hotkeysManager.HandleHotkey);
         }
 
@@ -73,6 +74,19 @@ namespace LabFilters
             else
             {
                 MessageBox.Show("Нет действий для возврата.", "Возврат");
+            }
+        }
+
+        private void pasteFromClipboard()
+        {
+            try
+            {
+                pictureBox.Image = (Bitmap)Clipboard.GetDataObject().GetData(DataFormats.Bitmap);
+                pictureBox.Refresh();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Что-то пошло не так..." + ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -157,11 +171,11 @@ namespace LabFilters
 
                     newImage = filter.processImage(newImage, backgroundWorker);
 
-                    this.Invoke((MethodInvoker)delegate {
-                        image = new Bitmap(newImage);
-                        pictureBox.Image = image;
-                        pictureBox.Refresh();
-                    });
+                    //this.Invoke((MethodInvoker)delegate {
+                    //    image = new Bitmap(newImage);
+                    //    pictureBox.Image = image;
+                    //    pictureBox.Refresh();
+                    //});
                 }
             }
             else if (e.Argument is object[] topHatArgs && topHatArgs.Length == 2)
@@ -182,21 +196,22 @@ namespace LabFilters
 
                     newImage = filter.processImage(newImage, backgroundWorker);
 
-                    this.Invoke((MethodInvoker)delegate {
-                        image = new Bitmap(newImage);
-                        pictureBox.Image = image;
-                        pictureBox.Refresh();
-                    });
+                    //this.Invoke((MethodInvoker)delegate {
+                    //    image = new Bitmap(newImage);
+                    //    pictureBox.Image = image;
+                    //    pictureBox.Refresh();
+                    //});
                 }
 
                 TopHatFilter topHatFilter = new TopHatFilter(originalImage, newImage);
                 newImage = topHatFilter.processImage(originalImage, backgroundWorker);
 
-                this.Invoke((MethodInvoker)delegate {
-                    image = new Bitmap(newImage);
-                    pictureBox.Image = image;
-                    pictureBox.Refresh();
-                });
+                //this.Invoke((MethodInvoker)delegate
+                //{
+                //    image = new Bitmap(newImage);
+                //    pictureBox.Image = image;
+                //    pictureBox.Refresh();
+                //});
             }
 
 
@@ -418,6 +433,11 @@ namespace LabFilters
         private void шагВпередToolStripMenuItem_Click(object sender, EventArgs e)
         {
             redoAction();
+        }
+
+        private void вставитьCtlrVToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            pasteFromClipboard();
         }
 
         private void настройкиToolStripMenuItem_Click(object sender, EventArgs e)
